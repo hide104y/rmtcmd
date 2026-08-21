@@ -1,0 +1,191 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <url>http://maven.apache.org</url>
+
+  <!-- package -->
+  <groupId>tool</groupId>
+
+  <!-- アプリ名 -->
+  <artifactId>rmtcmd</artifactId>
+  <name>rmtcmd</name>
+
+  <!-- バージョン -->
+  <version>1.0</version>
+
+  <!-- パッケージファイル形式 -->
+  <packaging>jar</packaging>
+
+  <properties>
+    <!-- ソースファイルの文字コード -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- カスタム変数 -->
+    <jvmver>11</jvmver>
+    <jrever>jre11</jrever>
+    <!-- JAVAバージョン -->
+    <java.version>${jvmver}</java.version>
+    <!-- maven.compiler.release：JDK9から指定可 -->
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+
+    <!-- バージョン管理プロパティ -->
+    <cxf.version>3.6.4</cxf.version>
+    <winrm4j.version>0.12.3</winrm4j.version>
+    <httpclient.version>4.5.14</httpclient.version>
+    <httpasyncclient.version>4.1.5</httpasyncclient.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <asm.version>9.10.1</asm.version>
+    <jaxb-runtime.version>2.3.9</jaxb-runtime.version>
+    <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
+    <saaj-impl.version>1.5.3</saaj-impl.version>
+  </properties>
+
+  <!-- パッケージ化の設定 -->
+  <build>
+    <finalName>${project.artifactId}-${project.version}-${jrever}</finalName>
+    <plugins>
+      <!-- コンパイラ設定 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+
+      <!-- 依存ライブラリ同梱化 (Uber JAR) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>${project.groupId}.${project.artifactId}</mainClass>
+                </transformer>
+                <!-- CXF等のMETA-INF/services, META-INF/cxf/bus-extensions.txt などをマージ -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/cxf/bus-extensions.txt</resource>
+                </transformer>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- 依存ライブラリ：一元管理 -->
+  <dependencyManagement>
+    <dependencies>
+      <!-- CXF 3.x (JAX-WS 2.3 / javax.xml.ws 準拠) のバージョン一元管理 BOM -->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-bom</artifactId>
+        <version>${cxf.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <!-- 依存ライブラリ -->
+  <dependencies>
+
+    <!-- 単体テスト -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- winrm4j (winrm4j-client を推移的に含む) -->
+    <dependency>
+      <groupId>io.cloudsoft.windows</groupId>
+      <artifactId>winrm4j</artifactId>
+      <version>${winrm4j.version}</version>
+    </dependency>
+
+    <!-- Apache CXF 3.x (JAX-WS クライアント & HTTP-HC 通信基盤) -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxws</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-transports-http-hc</artifactId>
+    </dependency>
+
+    <!-- Apache HTTP Components -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpasyncclient</artifactId>
+      <version>${httpasyncclient.version}</version>
+    </dependency>
+
+    <!-- Java 11/17 向け JAX-WS / JAXB 2.3 API & ランタイム -->
+    <dependency>
+      <groupId>jakarta.xml.ws</groupId>
+      <artifactId>jakarta.xml.ws-api</artifactId>
+      <version>${jakarta.xml.ws-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>${jaxb-runtime.version}</version>
+    </dependency>
+
+    <!-- SAAJ 実装 (Java 11+ 用 / javax.xml.soap 準拠) -->
+    <dependency>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <version>${saaj-impl.version}</version>
+    </dependency>
+
+    <!-- CXF ASM ヘルパー依存 (動的プロキシ最適化用) -->
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>${asm.version}</version>
+    </dependency>
+
+    <!-- ロギング (slf4j-api を推移的に含む) -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <!-- 共通モジュール：D:\Github\maven\repo\tool\cmnclslib\CmnClsLib\1.0\CmnClsLib-1.0.jar -->
+    <dependency>
+      <groupId>tool.cmnclslib</groupId>
+      <artifactId>CmnClsLib</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+  </dependencies>
+</project>

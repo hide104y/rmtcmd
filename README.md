@@ -24,7 +24,7 @@ gh repo list | Select-String rmtcmd
 # CD
 cd D:\Github\workspace.jre11
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\rmtcmd)){rmdir .\rmtcmd}
+if (Test-Path -Path .\rmtcmd){rm -Recurse -Force .\rmtcmd}
 # クローン実行
 git clone https://github.com/hide104y/rmtcmd.git
 ```
@@ -208,7 +208,7 @@ git push -u origin java11
 # CD
 cd D:\Github\workspace.jre11
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\rmtcmd)){rmdir .\rmtcmd}
+if (Test-Path -Path .\rmtcmd){rm -Recurse -Force .\rmtcmd}
 # クローン実行
 git clone -b java11 https://github.com/hide104y/rmtcmd.git
 ```

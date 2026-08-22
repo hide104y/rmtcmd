@@ -24,7 +24,7 @@ gh repo list | Select-String rmtcmd
 # CD
 cd D:\Github\Projects
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\rmtcmd)){rmdir .\rmtcmd}
+if (Test-Path -Path .\rmtcmd){rm -Recurse -Force .\rmtcmd}
 # クローン実行
 git clone https://github.com/hide104y/rmtcmd.git
 ```
@@ -171,7 +171,7 @@ dotnet publish .\rmtcmd\rmtcmd\rmtcmd.csproj -c Release -o D:\Github\bin.n10 -r 
 # CD
 cd D:\Github\Projects
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\rmtcmd)){rmdir .\rmtcmd}
+if (Test-Path -Path .\rmtcmd){rm -Recurse -Force .\rmtcmd}
 # クローン実行
 git clone -b dotnet10 https://github.com/hide104y/rmtcmd.git
 ```

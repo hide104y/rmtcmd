@@ -69,7 +69,7 @@ git push -u origin ${branch}
 ## Java、Mavenの切り替え
 ```shell
 # PATHの設定
-$Env:JAVA_HOME="${Env:USERPROFILE}\App\Java\jdkjdk11.0.29_7"
+$Env:JAVA_HOME="${Env:USERPROFILE}\App\Java\jdk11.0.29_7"
 $Env:MAVEN_HOME="${Env:USERPROFILE}\App\Maven\apache-maven-3.9.11"
 $Env:PATH="${Env:JAVA_HOME}\bin;${Env:MAVEN_HOME}\bin;${Env:PATH}"
 # 確認

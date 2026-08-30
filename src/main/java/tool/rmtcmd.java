@@ -67,7 +67,9 @@ public final class rmtcmd {
         final ClsAppArg appArg = new ClsAppArg(logger);
         final ClsWinRs winRs = new ClsWinRs(logger);
 
+        ClsWinRs.configureLogging(0);
         boolean isOk = appArg.getArgs(args);
+        ClsWinRs.configureLogging(appArg.getVerbose());
 
         if (appArg.getVerbose() > 0) {
             logger.writeLine(MdlConst.LVL_NONE, "===<<< [" + appArg.getExeBaseName() + "] START : "

@@ -392,4 +392,36 @@ public class ClsWinRsTest {
         assertNotNull(result);
         assertEquals("", result);
     }
+
+    /**
+     * configureLogging メソッドによる Verbose レベルごとのログレベルプロパティ設定を検証するテストです。
+     */
+    @Test
+    public void testConfigureLogging() {
+        // Verbose < 3 (warn)
+        ClsWinRs.configureLogging(0);
+        assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        ClsWinRs.configureLogging(2);
+        assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        // Verbose 3, 4 (info)
+        ClsWinRs.configureLogging(3);
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        ClsWinRs.configureLogging(4);
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        // Verbose >= 5 (debug)
+        ClsWinRs.configureLogging(5);
+        assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        // 後始末 (デフォルトのwarnへ復元)
+        ClsWinRs.configureLogging(0);
+    }
 }

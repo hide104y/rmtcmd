@@ -116,4 +116,28 @@ public final class rmtcmdTest {
         final int exitCode = rmtcmd.run(new String[]{"--help", "-v", "3", "-echo-retcd"});
         assertEquals(MdlConst.LVL_W, exitCode);
     }
+
+    /**
+     * コマンドライン引数の Verbose 指定に応じた SLF4J ログレベル設定の連動を検証するテストです。
+     */
+    @Test
+    public void testVerboseLevelConfiguresLogging() {
+        // Verbose < 3 (-vv 2) -> warn
+        rmtcmd.run(new String[]{"--help", "-vv", "2"});
+        assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        // Verbose >= 3 (--vv 3) -> info
+        rmtcmd.run(new String[]{"--help", "--vv", "3"});
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        // Verbose >= 5 (-vv 5) -> debug
+        rmtcmd.run(new String[]{"--help", "-vv", "5"});
+        assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
+        // 後始末
+        ClsWinRs.configureLogging(0);
+    }
 }

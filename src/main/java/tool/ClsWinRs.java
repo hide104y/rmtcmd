@@ -359,6 +359,7 @@ public class ClsWinRs {
      */
     public void setVerbose(final int verbose) {
         this.verbose = verbose;
+        configureLogging(verbose);
     }
 
     /**
@@ -794,6 +795,38 @@ public class ClsWinRs {
     }
 
     /**
+     * 詳細ログ出力レベル (Verbose) に応じて、SLF4J / Apache CXF 等の内部ロギングレベルを設定します。
+     *
+     * <p>Verbose が 4 未満（0〜3）の場合は INFO ログを非表示（WARN レベル）にし、
+     * 3 ～ 8 の場合は INFO レベル、9 以上の場合は DEBUG レベルを設定します。</p>
+     *
+     * <p><b>使用例:</b></p>
+     * <pre>{@code
+     * ClsWinRs.configureLogging(3);
+     * }</pre>
+     *
+     * @param verbose 詳細ログ出力レベル。
+     */
+    public static void configureLogging(final int verbose) {
+        if (verbose < 4) {
+            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn");
+            System.setProperty("org.slf4j.simpleLogger.log.org.apache.cxf", "warn");
+            System.setProperty("org.slf4j.simpleLogger.log.org.apache.http", "warn");
+            System.setProperty("org.slf4j.simpleLogger.log.io.cloudsoft", "warn");
+        } else if (verbose < 9) {
+            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
+            System.setProperty("org.slf4j.simpleLogger.log.org.apache.cxf", "info");
+            System.setProperty("org.slf4j.simpleLogger.log.org.apache.http", "info");
+            System.setProperty("org.slf4j.simpleLogger.log.io.cloudsoft", "info");
+        } else {
+            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+            System.setProperty("org.slf4j.simpleLogger.log.org.apache.cxf", "debug");
+            System.setProperty("org.slf4j.simpleLogger.log.org.apache.http", "debug");
+            System.setProperty("org.slf4j.simpleLogger.log.io.cloudsoft", "debug");
+        }
+    }
+
+    /**
      * 本クラスおよび内部コマンドステータスオブジェクトの初期化を行います。
      *
      * <p><b>使用例:</b></p>
@@ -803,6 +836,7 @@ public class ClsWinRs {
      * }</pre>
      */
     public void initialize() {
+        configureLogging(verbose);
         cmdStatus.setVerbose(verbose);
         cmdStatus.setDebugLevel(MdlConst.LVL_NONE);
         cmdStatus.initialize();

@@ -51,12 +51,26 @@ public class ClsWinRs {
     /** 実行モード: 実行ファイルを直接起動します。 */
     public static final int EXEC_MODE_EXE = 6;
 
-    /** 自動再試行（リトライ）対象となる例外メッセージ検出用の正規表現パターン */
-    private static final Pattern RETRY_ERR_REGEX = Pattern.compile("接続.*失敗.*削除の対象としてマークされているレジストリ.*キーに対して無効な操作を実行", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+    /** 自動再試行（リトライ）対象となる例外メッセージ検出用の正規表現パターン（日本語および英語メッセージ対応） */
+    private static final Pattern RETRY_ERR_REGEX = Pattern.compile(
+            "(接続.*失敗.*削除の対象としてマークされているレジストリ.*キーに対して無効な操作を実行)|"
+            + "(registry.*key.*marked\\s+for\\s+deletion)|"
+            + "(marked\\s+for\\s+deletion)",
+            Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
     /** IPv4アドレス形式検出用の正規表現パターン */
     private static final Pattern IPV4_REGEX = Pattern.compile("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$");
-    /** 日本語Windows用文字セット（MS932） */
-    private static final Charset CHARSET_MS932 = Charset.forName("MS932");
+    /** 日本語Windows用文字セット（環境に応じてMS932、Windows-31J、またはUTF-8へフォールバック） */
+    private static final Charset CHARSET_MS932;
+
+    static {
+        if (Charset.isSupported("MS932")) {
+            CHARSET_MS932 = Charset.forName("MS932");
+        } else if (Charset.isSupported("Windows-31J")) {
+            CHARSET_MS932 = Charset.forName("Windows-31J");
+        } else {
+            CHARSET_MS932 = StandardCharsets.UTF_8;
+        }
+    }
 
     /** ログ出力用ロガー */
     private final ClsLogger logger;
@@ -1170,18 +1184,7 @@ public class ClsWinRs {
      * }</pre>
      */
     public void clearBuffer() {
-        try {
-            outputBuffer.setLength(0);
-        } catch (final Exception ex) {
-            if (stackTrace) {
-                logger.writeLine(MdlConst.LVL_NONE, "");
-                for (final StackTraceElement ste : ex.getStackTrace()) {
-                    logger.writeLine(MdlConst.LVL_NONE, ste.toString());
-                }
-                logger.writeLine(MdlConst.LVL_NONE, "");
-            }
-            outputBuffer = new StringBuilder();
-        }
+        outputBuffer.setLength(0);
     }
 
     /**
@@ -1207,22 +1210,4 @@ public class ClsWinRs {
                 return AuthSchemes.NTLM;
         }
     }
-
-    /**
-     * WinRM経由でPowerShellスクリプトを実行し、標準出力を取得します。
-     *
-     * <p><b>使用例:</b></p>
-     * <pre>{@code
-     * String stdout = ClsWinRs.executePs(tool, "Get-Process");
-     * }</pre>
-     *
-     * @param tool WinRM接続が確立された {@link WinRmTool} インスタンス。
-     * @param script 実行対象のPowerShellスクリプト。
-     * @return 標準出力文字列。
-     */
-    public static String executePs(final WinRmTool tool, final String script) {
-        final WinRmToolResponse response = tool.executePs(script);
-        return response.getStdOut();
-    }
-
 }

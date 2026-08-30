@@ -111,8 +111,6 @@ public class ClsAppArgTest {
         assertEquals("", appArg.getUserNoDomain());
         assertEquals("", appArg.getUsername());
         assertEquals("", appArg.getPassword());
-        assertFalse(appArg.isSwitchUser());
-        assertFalse(appArg.isLogonAlwaysOk());
         assertEquals(0, appArg.getAuthMechanism());
         assertEquals("0", appArg.getOkRetCsv());
         assertEquals("", appArg.getWarnRetCsv());
@@ -144,9 +142,6 @@ public class ClsAppArgTest {
 
         appArg.setExeDir("C:\\temp");
         assertEquals("C:\\temp", appArg.getExeDir());
-
-        appArg.setPid(1234);
-        assertEquals(1234, appArg.getPid());
 
         appArg.setComSpec("cmd.exe");
         assertEquals("cmd.exe", appArg.getComSpec());
@@ -216,12 +211,6 @@ public class ClsAppArgTest {
 
         appArg.setPassword("testPass");
         assertEquals("testPass", appArg.getPassword());
-
-        appArg.setSwitchUser(true);
-        assertTrue(appArg.isSwitchUser());
-
-        appArg.setLogonAlwaysOk(true);
-        assertTrue(appArg.isLogonAlwaysOk());
 
         appArg.setAuthMechanism(2);
         assertEquals(2, appArg.getAuthMechanism());

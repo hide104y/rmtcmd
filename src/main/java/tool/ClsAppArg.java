@@ -63,7 +63,6 @@ public class ClsAppArg {
     private String addProcEnvStr = "";
     private String exeBaseName = "";
     private String exeDir = "";
-    private int pid;
     private String comSpec = "";
     private boolean usage;
     private int returnCode = MdlConst.LVL_I;
@@ -84,8 +83,6 @@ public class ClsAppArg {
     private boolean retryRmtCmd;
     private String username = "";
     private String password = "";
-    private boolean switchUser;
-    private boolean logonAlwaysOk;
     private int authMechanism;
     private String okRetCsv = "0";
     private String warnRetCsv = "";
@@ -123,12 +120,17 @@ public class ClsAppArg {
         this.cmmnArgs.getModuleInfo("");
         this.exeDir = this.cmmnArgs.getExeDir();
         this.exeBaseName = this.cmmnArgs.getExeBaseName();
-        this.pid = (int) this.cmmnArgs.getPid();
 
         final String comSpecEnv = System.getenv("ComSpec");
         this.comSpec = (comSpecEnv != null && !comSpecEnv.isBlank()) ? comSpecEnv : "cmd";
 
         String machine = System.getenv("COMPUTERNAME");
+        if (machine == null || machine.isBlank()) {
+            machine = System.getenv("HOSTNAME");
+        }
+        if (machine == null || machine.isBlank()) {
+            machine = System.getenv("HOST");
+        }
         if (machine == null || machine.isBlank()) {
             try {
                 machine = InetAddress.getLocalHost().getHostName();
@@ -175,23 +177,6 @@ public class ClsAppArg {
         this.exeDir = exeDir != null ? exeDir : "";
     }
 
-    /**
-     * 自プロセスのプロセスID (PID) を取得します。
-     *
-     * @return プロセスID。
-     */
-    public int getPid() {
-        return pid;
-    }
-
-    /**
-     * 自プロセスのプロセスID (PID) を設定します。
-     *
-     * @param pid プロセスID。
-     */
-    public void setPid(final int pid) {
-        this.pid = pid;
-    }
 
     /**
      * コマンドインタプリタの実行ファイル名 (ComSpec) を取得します。
@@ -589,41 +574,6 @@ public class ClsAppArg {
         this.password = password != null ? password : "";
     }
 
-    /**
-     * ユーザー切り替え実行フラグを取得します。
-     *
-     * @return ユーザー切り替えを行う場合は {@code true}。
-     */
-    public boolean isSwitchUser() {
-        return switchUser;
-    }
-
-    /**
-     * ユーザー切り替え実行フラグを設定します。
-     *
-     * @param switchUser ユーザー切り替え実行フラグ。
-     */
-    public void setSwitchUser(final boolean switchUser) {
-        this.switchUser = switchUser;
-    }
-
-    /**
-     * ログオン試行を常に正常扱いとするフラグを取得します。
-     *
-     * @return ログオン常時成功フラグ。
-     */
-    public boolean isLogonAlwaysOk() {
-        return logonAlwaysOk;
-    }
-
-    /**
-     * ログオン試行を常に正常扱いとするフラグを設定します。
-     *
-     * @param logonAlwaysOk ログオン常時成功フラグ。
-     */
-    public void setLogonAlwaysOk(final boolean logonAlwaysOk) {
-        this.logonAlwaysOk = logonAlwaysOk;
-    }
 
     /**
      * 認証機構コードを取得します。
@@ -1017,8 +967,6 @@ public class ClsAppArg {
         username = cmmnArgs.getUsername();
         userNoDomain = cmmnArgs.getUserNoDomain();
         password = cmmnArgs.getPassword();
-        logonAlwaysOk = cmmnArgs.isLogonAlwaysOk();
-        switchUser = cmmnArgs.isSwitchUser();
 
         // -----------------------------------------------------------------
         // Basic Option：
@@ -1396,8 +1344,18 @@ public class ClsAppArg {
      * }</pre>
      */
     public void usage() {
+        final String progName;
+        if (exeBaseName == null || exeBaseName.isBlank()) {
+            progName = "rmtcmd";
+        } else if (exeBaseName.endsWith(".exe") || exeBaseName.endsWith(".jar")) {
+            progName = exeBaseName;
+        } else {
+            progName = exeBaseName;
+        }
+        final String usagePath = (exeDir != null && !exeDir.isBlank()) ? exeDir + File.separator + progName : progName;
+
         logger.writeLine(MdlConst.LVL_NONE, "");
-        logger.writeLine(MdlConst.LVL_NONE, "Usage : " + exeDir + File.separator + exeBaseName + ".exe [Option] [Option]...");
+        logger.writeLine(MdlConst.LVL_NONE, "Usage : " + usagePath + " [Option] [Option]...");
         logger.writeLine(MdlConst.LVL_NONE, "");
         logger.writeLine(MdlConst.LVL_NONE, "Option ：");
         logger.writeLine(MdlConst.LVL_NONE, "   -h hostname         ：リモートホスト （現状値=" + remoteHost + "）");

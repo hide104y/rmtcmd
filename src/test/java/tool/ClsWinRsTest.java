@@ -328,12 +328,21 @@ public class ClsWinRsTest {
      */
     @Test
     public void testIsRetryableError() {
-        final String retryableMsg = "リモート サーバー SERVER01 への接続に失敗し、次のエラー メッセージが返されました: "
+        final String retryableMsgJa = "リモート サーバー SERVER01 への接続に失敗し、次のエラー メッセージが返されました: "
                 + "削除の対象としてマークされているレジストリ キーに対して無効な操作を実行しようとしました。";
-        assertTrue("リトライ対象のエラーメッセージに合致すること", winRs.isRetryError(retryableMsg));
+        assertTrue("日本語リトライ対象のエラーメッセージに合致すること", winRs.isRetryError(retryableMsgJa));
+
+        final String retryableMsgEn1 = "The operation attempted on a registry key that has been marked for deletion.";
+        assertTrue("英語リトライ対象のエラーメッセージ（パターン1）に合致すること", winRs.isRetryError(retryableMsgEn1));
+
+        final String retryableMsgEn2 = "Failed to connect: key is marked for deletion.";
+        assertTrue("英語リトライ対象のエラーメッセージ（パターン2）に合致すること", winRs.isRetryError(retryableMsgEn2));
 
         final String nonRetryableMsg = "アクセスが拒否されました。";
         assertFalse("通常エラーはリトライ対象外であること", winRs.isRetryError(nonRetryableMsg));
+
+        final String nonRetryableMsgEn = "Access is denied.";
+        assertFalse("英語通常エラーはリトライ対象外であること", winRs.isRetryError(nonRetryableMsgEn));
 
         assertFalse("null はリトライ対象外であること", winRs.isRetryError(null));
         assertFalse("空文字列はリトライ対象外であること", winRs.isRetryError(""));

@@ -145,6 +145,7 @@ public final class rmtcmd {
             winRs.setLogWrite(true);
             winRs.setRemoteHost(appArg.getRemoteHost());
             winRs.setExecMode(appArg.getExecMode());
+            winRs.setComSpec(appArg.getComSpec());
             winRs.setVerbose(appArg.getVerbose());
             winRs.setPort(appArg.getPort());
             winRs.setWorkDir(appArg.getWorkDir());

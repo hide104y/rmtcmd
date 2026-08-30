@@ -122,18 +122,18 @@ public final class rmtcmdTest {
      */
     @Test
     public void testVerboseLevelConfiguresLogging() {
-        // Verbose < 3 (-vv 2) -> warn
-        rmtcmd.run(new String[]{"--help", "-vv", "2"});
+        // Verbose < 4 (-vv 3) -> warn
+        rmtcmd.run(new String[]{"--help", "-vv", "3"});
         assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
         assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
 
-        // Verbose >= 3 (--vv 3) -> info
-        rmtcmd.run(new String[]{"--help", "--vv", "3"});
+        // Verbose >= 4 (--vv 4) -> info
+        rmtcmd.run(new String[]{"--help", "--vv", "4"});
         assertEquals("info", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
         assertEquals("info", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
 
-        // Verbose >= 5 (-vv 5) -> debug
-        rmtcmd.run(new String[]{"--help", "-vv", "5"});
+        // Verbose >= 9 (-vv 9) -> debug
+        rmtcmd.run(new String[]{"--help", "-vv", "9"});
         assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
         assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
 

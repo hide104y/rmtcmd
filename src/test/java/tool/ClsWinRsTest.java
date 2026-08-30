@@ -403,21 +403,21 @@ public class ClsWinRsTest {
         assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
         assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
 
-        ClsWinRs.configureLogging(2);
+        ClsWinRs.configureLogging(3);
         assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
         assertEquals("warn", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
 
         // Verbose 3, 4 (info)
-        ClsWinRs.configureLogging(3);
-        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
-        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
-
         ClsWinRs.configureLogging(4);
         assertEquals("info", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
         assertEquals("info", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
 
+        ClsWinRs.configureLogging(8);
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
+        assertEquals("info", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
+
         // Verbose >= 5 (debug)
-        ClsWinRs.configureLogging(5);
+        ClsWinRs.configureLogging(9);
         assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.defaultLogLevel"));
         assertEquals("debug", System.getProperty("org.slf4j.simpleLogger.log.org.apache.cxf"));
 

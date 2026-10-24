@@ -14,9 +14,9 @@
     <Reference Include="CmnClsLib">
       <HintPath>..\..\CmnClsLib\CmnClsLib\bin\Release\net10.0\CmnClsLib.dll</HintPath>
     </Reference>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.11" />
-    <PackageReference Include="System.Management.Automation" Version="7.6.4" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.13" />
+    <PackageReference Include="System.Management.Automation" Version="7.6.8" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.13" />
     <FluentValidationExcludedCultures Include="ar;el;he;hi;no;ro;sk;be;cs;cs-CZ;da;de;es;fa;fi;fr;it;ko;mk;nl;pl;pt;ru;sv;tr;uk;zh-CN;zh-CHS;zh-CHT;zh;zh-Hans;zh-Hant;pt-BR;">
         <InProject>false</InProject>
     </FluentValidationExcludedCultures>
